@@ -37,7 +37,7 @@ if (process.env.INSTANCE_UNIX_SOCKET) {
     dbConfig.socketPath = process.env.INSTANCE_UNIX_SOCKET;
 } else {
     console.log("💻 Menggunakan Koneksi Lokal (TCP)");
-    dbConfig.host = process.env.DB_HOST || "127.0.0.1";
+    dbConfig.host = process.env.DB_HOST || "34.79.12.137";
 }
 
 const db = mysql.createConnection(dbConfig);
