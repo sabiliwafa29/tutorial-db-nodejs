@@ -23,11 +23,28 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 // ===== Koneksi Database =====
-const db = mysql.createConnection({
-  host: process.env.DB_HOST || "127.0.0.1",
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASSWORD || "",
-  database: process.env.DB_NAME || "indoor navigation"
+let dbConfig = {
+    user: process.env.DB_USER || "root",
+    password: process.env.DB_PASSWORD || "", // Masukkan password db cloud nanti di env
+    database: process.env.DB_NAME || "dbrsi"
+};
+
+// Logika: Jika ada variabel INSTANCE_UNIX_SOCKET (di Cloud Run), pakai socketPath.
+// Jika tidak ada (di laptop), pakai host localhost.
+if (process.env.INSTANCE_UNIX_SOCKET) {
+    dbConfig.socketPath = process.env.INSTANCE_UNIX_SOCKET;
+} else {
+    dbConfig.host = process.env.DB_HOST || "127.0.0.1";
+}
+
+const db = mysql.createConnection(dbConfig);
+
+db.connect((err) => {
+    if (err) {
+        console.error('Error connecting to database:', err);
+        return;
+    }
+    console.log('Connected to database successfully');
 });
 
 db.connect(err => {
