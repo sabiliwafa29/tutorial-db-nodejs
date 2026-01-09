@@ -25,15 +25,18 @@ app.set("views", path.join(__dirname, "views"));
 // ===== Koneksi Database =====
 let dbConfig = {
     user: process.env.DB_USER || "root",
-    password: process.env.DB_PASSWORD || "", // Masukkan password db cloud nanti di env
-    database: process.env.DB_NAME || "dbrsi"
+    password: process.env.DB_PASSWORD || "", 
+    database: process.env.DB_NAME || "dbrsi",
+    // Tambahkan ini agar koneksi tidak putus saat idle
+    connectTimeout: 10000 
 };
 
-// Logika: Jika ada variabel INSTANCE_UNIX_SOCKET (di Cloud Run), pakai socketPath.
-// Jika tidak ada (di laptop), pakai host localhost.
+// Logika Switch Cloud vs Lokal
 if (process.env.INSTANCE_UNIX_SOCKET) {
+    console.log("☁️ Menggunakan Koneksi Cloud SQL (Socket)");
     dbConfig.socketPath = process.env.INSTANCE_UNIX_SOCKET;
 } else {
+    console.log("💻 Menggunakan Koneksi Lokal (TCP)");
     dbConfig.host = process.env.DB_HOST || "127.0.0.1";
 }
 
@@ -41,15 +44,11 @@ const db = mysql.createConnection(dbConfig);
 
 db.connect((err) => {
     if (err) {
-        console.error('Error connecting to database:', err);
-        return;
+        console.error('❌ GAGAL KONEK DATABASE:', err.message);
+        // Jangan pakai throw err, biar kita bisa liat log errornya di GCP
+        return; 
     }
-    console.log('Connected to database successfully');
-});
-
-db.connect(err => {
-  if (err) throw err;
-  console.log("✅ Connected to database...");
+    console.log('✅ BERHASIL Konek ke Database!');
 });
 
 // ===== Login Page =====
