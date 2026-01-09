@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <div class="flex h-screen overflow-hidden">
+
+    <aside class="w-64 bg-white shadow-md flex flex-col z-10">
+      <div class="p-6 border-b border-gray-200">
+        <h1 class="text-2xl font-bold text-blue-600">Dashboard</h1>
+      </div>
+
+      <nav class="flex-1 p-4 space-y-2">
+        <a href="/" class="block py-2 px-3 rounded-md hover:bg-blue-100 font-medium">👤 Data User</a>
+        
+        <a href="/inav" class="block py-2 px-3 rounded-md bg-blue-100 text-blue-700 font-medium">📍 iNav</a>
+        
+        <a href="/map" class="block py-2 px-3 rounded-md hover:bg-blue-100 font-medium">🗺️ Map</a>
+        <a href="/admin" class="block py-2 px-3 rounded-md hover:bg-blue-100 font-medium">🔑 Admin</a>
+      </nav>
+
+      <div class="p-4 border-t border-gray-200">
+        <a href="/logout" class="text-red-500 hover:underline font-medium">Logout</a>
+      </div>
+    </aside>
+
+    <main class="flex-1 h-full overflow-y-auto p-6 bg-gray-100">
+      
+      <header class="flex items-center justify-between mb-6">
+        <h2 class="text-3xl font-semibold"><%= title %></h2>
+      </header>
+
+      <form action="/tambah-inav" method="POST" class="grid grid-cols-2 md:grid-cols-5 gap-4 bg-white p-6 rounded-lg shadow">
+        <input type="text" name="starting_position" placeholder="Starting Position" class="border p-2 rounded-md" required>
+        <input type="text" name="target" placeholder="Target" class="border p-2 rounded-md" required>
+        <input type="text" name="history" placeholder="History" class="border p-2 rounded-md" required>
+        
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 col-span-2 md:col-span-1">
+            Tambah
+        </button>
+      </form>
+
+      <div class="mt-8 bg-white p-6 rounded-lg shadow mb-10"> 
+        <h3 class="text-2xl font-semibold mb-4">Daftar Data iNav</h3>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse border border-gray-200 text-sm">
+            <thead>
+              <tr class="bg-blue-50 text-left">
+                <th class="border px-4 py-2">ID</th>
+                <th class="border px-4 py-2">Starting Position</th>
+                <th class="border px-4 py-2">Target</th>
+                <th class="border px-4 py-2">History</th>
+                <th class="border px-4 py-2 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (inavs && inavs.length > 0) { %>
+                <% inavs.forEach((row) => { %>
+                  <tr class="hover:bg-gray-50">
+                    <td class="border px-4 py-2"><%= row.id %></td>
+                    <td class="border px-4 py-2"><%= row.starting_position %></td>
+                    <td class="border px-4 py-2"><%= row.target %></td>
+                    <td class="border px-4 py-2"><%= row.history %></td>
+                    <td class="border px-4 py-2 text-center">
+                      <a href="/delete-inav/<%= row.id %>" class="text-red-500 hover:underline" onclick="return confirm('Yakin ingin menghapus data ini?');">Hapus</a>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="6" class="text-center py-4 text-gray-500">Belum ada data iNav.</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+</body>
+</html>
